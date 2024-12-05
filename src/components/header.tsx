@@ -1,45 +1,22 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import ThemeSwitcher from './themeSwitcher';
-import { FC, useMemo } from 'react';
-import { UnsafeBurnerWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { clusterApiUrl } from '@solana/web3.js';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import {
-  WalletDisconnectButton,
-  WalletModalProvider,
-  WalletMultiButton,
-} from '@solana/wallet-adapter-react-ui';
-import {
-  ConnectionProvider,
-  WalletProvider,
-} from '@solana/wallet-adapter-react';
+import createNft from '@/lib/umi/createNft';
+import { useConnection, useWallet } from '@solana/wallet-adapter-react';
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
+import { walletAdapterIdentity } from '@metaplex-foundation/umi-signer-wallet-adapters';
+import { mplCore } from '@metaplex-foundation/mpl-core';
+import UploadForm from './uploadForm';
 
-const Wallet: FC = () => {
-  // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-  const network = WalletAdapterNetwork.Devnet;
-
-  // You can also provide a custom RPC endpoint.
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-  const wallets = useMemo(
-    () => [new UnsafeBurnerWalletAdapter()],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
-  );
-
-  return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <WalletModalProvider>
-          <WalletMultiButton />
-          <WalletDisconnectButton />
-          {/* Your app's components go here, nested within the context providers. */}
-        </WalletModalProvider>
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-};
+// Fixes: Hydration failed because the initial UI does not match what was rendered on the server.
+const DynamicWalletButton = dynamic(
+  async () =>
+    (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
+  {
+    ssr: false,
+  }
+);
 
 const Header = () => {
   return (
@@ -49,9 +26,10 @@ const Header = () => {
         <code className='font-mono font-bold'>src/app/page.tsx</code>
       </p>
       <div className='flex pt-4 lg:pt-0 w-full items-end justify-center gap-4 dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none'>
-        <Wallet />
+        <DynamicWalletButton />
         <ThemeSwitcher />
       </div>
+      <UploadForm />
     </div>
   );
 };

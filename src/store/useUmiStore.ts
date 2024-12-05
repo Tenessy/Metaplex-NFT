@@ -1,3 +1,4 @@
+import { mplCore } from '@metaplex-foundation/mpl-core';
 import {
   Signer,
   Umi,
@@ -10,6 +11,7 @@ import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
 import { createSignerFromWalletAdapter } from '@metaplex-foundation/umi-signer-wallet-adapters';
 import { WalletAdapter } from '@solana/wallet-adapter-base';
 import { create } from 'zustand';
+import { clusterApiUrl } from '@solana/web3.js';
 
 interface UmiState {
   umi: Umi;
@@ -19,11 +21,7 @@ interface UmiState {
 
 const useUmiStore = create<UmiState>()((set, get) => ({
   // Replace URI with either hardcode, a const variable, or .env value
-  umi: createUmi('http://api.devnet.solana.com').use(
-    signerIdentity(
-      createNoopSigner(publicKey('11111111111111111111111111111111'))
-    )
-  ),
+  umi: createUmi('https://api.devnet.solana.com').use(mplCore()),
   signer: undefined,
   updateSigner: (signer) => {
     const currentSigner = get().signer;

@@ -239,3 +239,7 @@ const transferSolToDestination = async ({
 
 export default transferSolToDestination
 ```
+
+``` ts
+// Recharger un compte test: solana airdrop 2 ${PUBLIC_KEY} --url devnet
+```

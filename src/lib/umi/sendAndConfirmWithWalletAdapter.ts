@@ -10,6 +10,7 @@ const sendAndConfirmWalletAdapter = async (
     skipPreflight?: boolean;
   }
 ) => {
+  // TODO: Utiliser la fonction `umiWithCurrentWalletAdapter` pour obtenir l'instance Umi
   const umi = useUmiStore.getState().umi;
   const currentSigner = useUmiStore.getState().signer;
   umi.use(signerIdentity(currentSigner!));

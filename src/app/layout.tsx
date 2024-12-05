@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <WalletAdapterProvider>
       <UmiProvider>
-        <html lang='en'>
+        <html lang='fr'>
           <body className={inter.className}>
             <ThemeProviderWrapper>{children}</ThemeProviderWrapper>
           </body>

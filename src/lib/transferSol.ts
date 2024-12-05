@@ -1,10 +1,10 @@
 // Example of a function that transfers SOL from one account to another pulling umi
 // from the useUmiStore in a ts file which is not a React component file calling a hook.
 
-import { transferSol } from "@metaplex-foundation/mpl-toolbox";
-import umiWithCurrentWalletAdapter from "./umi/umiWithCurrentWalletAdapter";
-import { publicKey, sol } from "@metaplex-foundation/umi";
-import sendAndConfirmWalletAdapter from "./umi/sendAndConfirmWithWalletAdapter";
+import { transferSol } from '@metaplex-foundation/mpl-toolbox';
+import umiWithCurrentWalletAdapter from './umi/umiWithCurrentWalletAdapter';
+import { publicKey, sol } from '@metaplex-foundation/umi';
+import sendAndConfirmWalletAdapter from './umi/sendAndConfirmWithWalletAdapter';
 
 // This function transfers SOL from the current wallet to a destination account and is callable
 // from any tsx/ts or component file in the project.
