@@ -27,6 +27,7 @@ export default function UploadForm() {
   const [nftExplorerUri, setNftExplorerUri] = useState<string>('');
   const [activeStep, setActiveStep] = useState<number>(0);
   const [items, setItems] = useState<UploadItem[]>([]);
+  const [imageUri, setImageUri] = useState<string>('');
 
   const wallet = useWallet();
   const umi = useUmiStore().umi;
@@ -63,9 +64,15 @@ export default function UploadForm() {
     evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     evt.preventDefault();
+
+    if (!wallet.publicKey) {
+      throw new Error('Connectez votre wallet pour continuer');
+    }
+
     if (!items.length) {
       throw new Error('Sélectionnez une image pour continuer');
     }
+
     const file = items[0].file;
     setLoading(true);
     // Create NFT
@@ -73,6 +80,7 @@ export default function UploadForm() {
       setLoading(false);
       throw new Error(err);
     });
+    setImageUri(imageUri[0]);
     // Step 1
     setActiveStep(1);
     const metaDataUri = await generateMetadataUri(imageUri, umi).catch(
@@ -176,6 +184,8 @@ export default function UploadForm() {
       {activeStep === 3 && <Confetti confettiComplete={() => setOpen(true)} />}
       <DialogMaterial
         open={open}
+        showFooter={true}
+        imageUri={imageUri}
         handleClose={() => {
           setOpen(false);
           setActiveStep(0);
