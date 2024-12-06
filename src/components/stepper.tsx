@@ -14,8 +14,8 @@ interface StepperMaterialProps {
 
 const StepperMaterial = ({ activeStep }: StepperMaterialProps) => {
   return (
-    <div className='w-full px-12 py-6'>
-      <Stepper activeStep={activeStep}>
+    <div className='w-full py-6'>
+      <Stepper style={{ zIndex: 1 }} activeStep={activeStep}>
         <Step>
           <PhotoIcon className='h-5 w-5' />
         </Step>

@@ -18,20 +18,44 @@ import {
 } from '@material-tailwind/react';
 import Confetti from './confetti';
 import { DialogMaterial } from './dialog';
+import { ListItems } from './list';
+import { UploadItem } from '@/models/upload-item.model';
 
 export default function UploadForm() {
-  const wallet = useWallet();
-  const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
   const [nftExplorerUri, setNftExplorerUri] = useState<string>('');
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [items, setItems] = useState<UploadItem[]>([]);
+
+  const wallet = useWallet();
   const umi = useUmiStore().umi;
   umi.use(walletAdapterIdentity(wallet));
 
+  const deleteItem = (index: number): void => {
+    setItems((prev) => {
+      const newItems = [...prev];
+      newItems.splice(index, 1);
+      return newItems;
+    });
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      const files = Array.prototype.slice.call(e.target.files) as File[];
+
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = (): void => {
+          const result = reader.result as string;
+          const item = { imageUrl: result, title: file.name, file };
+          setItems((prev) => {
+            return [...prev, item];
+          });
+        };
+      }
     }
   };
 
@@ -39,42 +63,42 @@ export default function UploadForm() {
     evt: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) {
     evt.preventDefault();
-    if (file) {
-      setIsLoading(true);
-      // Create NFT
-      const imageUri = await generateImageUri(umi, file).catch((err) => {
-        setIsLoading(false);
-        throw new Error(err);
-      });
-      // Step 1
-      setActiveStep(1);
-      const metaDataUri = await generateMetadataUri(imageUri, umi).catch(
-        (err) => {
-          setIsLoading(false);
-          throw new Error(err);
-        }
-      );
-      // Step 2
-      setActiveStep(2);
-      const { nftExplorerUri, transactionUri } = await createNft(
-        umi,
-        metaDataUri
-      );
-      setNftExplorerUri(nftExplorerUri);
-      setActiveStep(3);
-      setIsLoading(false);
-      // Step 3
+    if (!items.length) {
+      throw new Error('Sélectionnez une image pour continuer');
     }
+    const file = items[0].file;
+    setLoading(true);
+    // Create NFT
+    const imageUri = await generateImageUri(umi, file).catch((err) => {
+      setLoading(false);
+      throw new Error(err);
+    });
+    // Step 1
+    setActiveStep(1);
+    const metaDataUri = await generateMetadataUri(imageUri, umi).catch(
+      (err) => {
+        setLoading(false);
+        throw new Error(err);
+      }
+    );
+    // Step 2
+    setActiveStep(2);
+    const { nftExplorerUri, transactionUri } = await createNft(
+      umi,
+      metaDataUri
+    );
+    setNftExplorerUri(nftExplorerUri);
+    setActiveStep(3);
+    setLoading(false);
+    // Step 3
   }
 
   return (
     <>
-      <div className='mt-4 flex flex-col max-w-4xl flex-column gap-2 items-center justify-center w-full mb-4'>
-        <Card className='mt-6 w-full'>
+      <div className='mt-4 flex flex-col max-w-3xl flex-column gap-2 items-center justify-center w-full mb-4'>
+        <Card className='mt-6 w-full px-6'>
           <CardBody>
-            <div>
-              <Stepper activeStep={activeStep} />
-            </div>
+            <Stepper activeStep={activeStep} />
             <div className='flex gap-8 items-center justify-center w-full'>
               <label
                 htmlFor='dropzone-file'
@@ -110,46 +134,23 @@ export default function UploadForm() {
                   accept='.png'
                   className='hidden'
                   onChange={handleFileChange}
+                  multiple
                 />
               </label>
             </div>
-            {file && (
-              <div className='flex py-6'>
-                <svg
-                  className='w-6 h-6 text-gray-800 dark:text-white'
-                  aria-hidden='true'
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='24'
-                  height='24'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    fill='currentColor'
-                    d='M16 18H8l2.5-6 2 4 1.5-2 2 4Zm-1-8.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z'
-                  />
-                  <path
-                    stroke='currentColor'
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
-                    stroke-width='2'
-                    d='M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1ZM8 18h8l-2-4-1.5 2-2-4L8 18Zm7-8.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z'
-                  />
-                </svg>
-                <span>{file.name}</span>
-              </div>
-            )}
+            <ListItems items={items} onDelete={deleteItem} />
           </CardBody>
           <CardFooter className='pt-0'>
             <Button
-              loading={isLoading}
-              className='flex items-center gap-3'
+              loading={loading}
+              className='flex items-center gap-3 justify-center'
               variant='gradient'
               color='deep-purple'
               onClick={uploadFile}
-              disabled={!file || isLoading}
+              size='lg'
+              fullWidth
             >
-              {isLoading ? (
+              {loading ? (
                 'En cours...'
               ) : (
                 <>
@@ -157,7 +158,7 @@ export default function UploadForm() {
                     xmlns='http://www.w3.org/2000/svg'
                     viewBox='0 0 24 24'
                     fill='currentColor'
-                    className='size-6'
+                    className='size-5'
                   >
                     <path
                       fillRule='evenodd'
@@ -178,7 +179,7 @@ export default function UploadForm() {
         handleClose={() => {
           setOpen(false);
           setActiveStep(0);
-          setFile(null);
+          setItems([]);
         }}
       >
         <Typography color='deep-purple' variant='h4'>

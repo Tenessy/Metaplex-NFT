@@ -15,7 +15,7 @@ const DynamicWalletButton = dynamic(
 
 const Header = () => {
   return (
-    <div className='z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex'>
+    <div className='z-10 w-full max-w-4xl items-center justify-between font-mono text-sm lg:flex'>
       <div className='relative z-[-1] flex place-items-center '>
         <img
           className='relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert'
