@@ -5,7 +5,6 @@ import {
   WalletAdapter,
   walletAdapterIdentity,
 } from '@metaplex-foundation/umi-signer-wallet-adapters';
-import { useWallet } from '@solana/wallet-adapter-react';
 
 export const umiWithWalletAdapterIdentity = (wallet: WalletAdapter): Umi => {
   const umi = useUmiStore.getState().umi;

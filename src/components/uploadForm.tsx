@@ -9,17 +9,12 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { useState } from 'react';
 import useUmiStore from '@/store/useUmiStore';
 import Stepper from './stepper';
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  Typography,
-} from '@material-tailwind/react';
-import Confetti from './confetti';
+
+import { ConfettiCustom } from './confetti';
 import { DialogMaterial } from './dialog';
 import { ListItems } from './list';
 import { UploadItem } from '@/models/upload-item.model';
+import { Button, Card, CardBody, CardFooter, Typography } from './material-tailwind';
 
 export default function UploadForm() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -91,9 +86,11 @@ export default function UploadForm() {
     );
     // Step 2
     setActiveStep(2);
-    const { nftExplorerUri, transactionUri } = await createNft(
-      umi,
-      metaDataUri
+    const { nftExplorerUri } = await createNft(umi, metaDataUri).catch(
+      (err) => {
+        setLoading(false);
+        throw new Error(err);
+      }
     );
     setNftExplorerUri(nftExplorerUri);
     setActiveStep(3);
@@ -181,7 +178,9 @@ export default function UploadForm() {
           </CardFooter>
         </Card>
       </div>
-      {activeStep === 3 && <Confetti confettiComplete={() => setOpen(true)} />}
+      {activeStep === 3 && (
+        <ConfettiCustom confettiComplete={() => setOpen(true)} />
+      )}
       <DialogMaterial
         open={open}
         showFooter={true}

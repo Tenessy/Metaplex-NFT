@@ -17,6 +17,7 @@ export function Clipboard({ textButton }: ClipboardProps) {
       onClick={() => {
         copy(textButton);
         setCopied(true);
+        console.log(value);
       }}
       className='flex items-center gap-x-3 px-4 py-2.5 lowercase'
     >

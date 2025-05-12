@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import ThemeSwitcher from './themeSwitcher';
 import MetaplexLogo from '@/assets/logos/metaplex-logo.png';
 
 // Fixes: Hydration failed because the initial UI does not match what was rendered on the server.

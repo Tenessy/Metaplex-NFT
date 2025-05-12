@@ -7,7 +7,7 @@ interface ConfettiProps {
   confettiComplete?: () => void;
 }
 
-export default ({ confettiComplete }: ConfettiProps) => {
+export function ConfettiCustom({ confettiComplete }: ConfettiProps) {
   const { width, height } = useWindowSize();
 
   return (
@@ -21,4 +21,4 @@ export default ({ confettiComplete }: ConfettiProps) => {
       onConfettiComplete={confettiComplete}
     />
   );
-};
+}

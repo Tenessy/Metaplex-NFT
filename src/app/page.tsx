@@ -1,4 +1,3 @@
-import MetaplexLogo from '@/assets/logos/metaplex-logo.png';
 import Header from '@/components/header';
 import UploadForm from '@/components/uploadForm';
 export default function Home() {

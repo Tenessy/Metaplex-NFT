@@ -2,7 +2,6 @@ import { create } from '@metaplex-foundation/mpl-core';
 import {
   createGenericFileFromBrowserFile,
   generateSigner,
-  sol,
   Umi,
 } from '@metaplex-foundation/umi';
 import { base58 } from '@metaplex-foundation/umi/serializers';

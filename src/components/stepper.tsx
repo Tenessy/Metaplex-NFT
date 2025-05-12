@@ -1,6 +1,6 @@
 'use client';
-import React, { useState } from 'react';
-import { Stepper, Step, Typography } from '@material-tailwind/react';
+import React from 'react';
+import { Stepper, Step } from '@material-tailwind/react';
 import {
   PhotoIcon,
   DocumentIcon,
